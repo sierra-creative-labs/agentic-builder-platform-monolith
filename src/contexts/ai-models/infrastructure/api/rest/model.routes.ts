@@ -1,23 +1,26 @@
 import { Router } from 'express';
 import { InMemoryModelRepository } from '../../persistence/InMemoryModelRepository';
+import { InMemoryProviderRepository } from '../../persistence/InMemoryProviderRepository';
 import { CreateModelUseCase } from '../../../application/use-cases/CreateModelUseCase';
 import { GetModelUseCase } from '../../../application/use-cases/GetModelUseCase';
 import { ListModelsUseCase } from '../../../application/use-cases/ListModelsUseCase';
 import { UpdateModelUseCase } from '../../../application/use-cases/UpdateModelUseCase';
 import { DeleteModelUseCase } from '../../../application/use-cases/DeleteModelUseCase';
 import { ModelController } from './ModelController';
+import { Provider } from '../../../domain/entities/Provider';
 
 const router = Router();
 
-// Wiring up dependencies (In-Memory Repository for now)
-// Note: In a real/larger application, use a DI Container or a centralized Composition Root
-const repository = new InMemoryModelRepository();
+// Wiring up dependencies
+const modelRepository = new InMemoryModelRepository();
+const providerRepository = new InMemoryProviderRepository();
 
-const createUseCase = new CreateModelUseCase(repository);
-const getUseCase = new GetModelUseCase(repository);
-const listUseCase = new ListModelsUseCase(repository);
-const updateUseCase = new UpdateModelUseCase(repository);
-const deleteUseCase = new DeleteModelUseCase(repository);
+
+const createUseCase = new CreateModelUseCase(modelRepository, providerRepository);
+const getUseCase = new GetModelUseCase(modelRepository);
+const listUseCase = new ListModelsUseCase(modelRepository);
+const updateUseCase = new UpdateModelUseCase(modelRepository);
+const deleteUseCase = new DeleteModelUseCase(modelRepository);
 
 const controller = new ModelController(
     createUseCase,
