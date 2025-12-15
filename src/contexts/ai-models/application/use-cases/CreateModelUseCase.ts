@@ -26,7 +26,7 @@ export class CreateModelUseCase {
         }
 
         if (!provider.hasModel(dto.model)) {
-            throw new Error(`Model '${dto.model}' is not available for provider '${dto.provider}'`);
+            throw new Error(`Model with id '${dto.model}' is not available for provider '${dto.provider}'`);
         }
 
         const model = new Model({

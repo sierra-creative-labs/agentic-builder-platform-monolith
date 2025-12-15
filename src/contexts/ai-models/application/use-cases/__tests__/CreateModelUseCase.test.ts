@@ -18,6 +18,7 @@ describe('CreateModelUseCase', () => {
         };
         mockProviderRepository = {
             findById: mock((id: string) => Promise.resolve(null)),
+            save: mock((provider: Provider) => Promise.resolve()), // Add save mock
         };
 
         useCase = new CreateModelUseCase(
@@ -37,27 +38,38 @@ describe('CreateModelUseCase', () => {
 
     test('should create a model successfully when provider and model are valid', async () => {
         // Setup Provider Mock
+        const now = new Date();
+        const models = [
+            { id: 'm1', name: 'claude-3', associatedModelIds: new Set<string>() },
+            { id: 'm2', name: 'claude-2', associatedModelIds: new Set<string>() }
+        ];
         const mockProvider = new Provider({
             id: 'anthropic',
             name: 'Anthropic',
-            availableModels: ['claude-3', 'claude-2']
+            availableModels: new Map(models.map(m => [m.id, m])),
+            createdAt: now,
+            updatedAt: now
         });
         mockProviderRepository.findById = mock(() => Promise.resolve(mockProvider));
 
         const dto = {
             id: 'custom-id',
             provider: 'anthropic',
-            model: 'claude-3',
+            model: 'm1', // Using ID
             temperature: 0.5,
         };
 
         await useCase.execute(dto);
 
+        // Verify Model Saved
         expect(mockModelRepository.save).toHaveBeenCalledTimes(1);
         const savedModel = mockModelRepository.save.mock.calls[0][0];
         expect(savedModel).toBeInstanceOf(Model);
         expect(savedModel.id).toBe('custom-id');
-        expect(savedModel.provider).toBe('anthropic');
+        expect(savedModel.model).toBe('m1'); // Stores the model ID
+
+        // Verify Provider was NOT Updated (since we removed that logic)
+        expect(mockProviderRepository.save).not.toHaveBeenCalled();
     });
 
     test('should throw error if provider not found', async () => {
@@ -70,30 +82,42 @@ describe('CreateModelUseCase', () => {
     });
 
     test('should throw error if model not in provider list', async () => {
+        const now = new Date();
+        const models = [
+            { id: 'm3', name: 'gpt-4', associatedModelIds: new Set<string>() }
+        ];
         const mockProvider = new Provider({
             id: 'openai',
             name: 'OpenAI',
-            availableModels: ['gpt-4']
+            availableModels: new Map(models.map(m => [m.id, m])),
+            createdAt: now,
+            updatedAt: now
         });
         mockProviderRepository.findById = mock(() => Promise.resolve(mockProvider));
 
-        const dto = { provider: 'openai', model: 'claude-3' }; // Wrong model for this provider
+        const dto = { provider: 'openai', model: 'wrong-id' }; // Wrong model ID
 
-        await expect(useCase.execute(dto)).rejects.toThrow("Model 'claude-3' is not available for provider 'openai'");
+        await expect(useCase.execute(dto)).rejects.toThrow("Model with id 'wrong-id' is not available for provider 'openai'");
         expect(mockModelRepository.save).not.toHaveBeenCalled();
     });
 
     test('should generate an id if not provided', async () => {
+        const now = new Date();
+        const models = [
+            { id: 'm4', name: 'gemini-pro', associatedModelIds: new Set<string>() }
+        ];
         const mockProvider = new Provider({
             id: 'google',
             name: 'Google',
-            availableModels: ['gemini-pro']
+            availableModels: new Map(models.map(m => [m.id, m])),
+            createdAt: now,
+            updatedAt: now
         });
         mockProviderRepository.findById = mock(() => Promise.resolve(mockProvider));
 
         const dto = {
             provider: 'google',
-            model: 'gemini-pro',
+            model: 'm4',
         };
 
         await useCase.execute(dto);
