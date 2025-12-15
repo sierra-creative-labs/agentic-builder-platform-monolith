@@ -54,17 +54,32 @@ describe('InMemoryModelRepository', () => {
         await expect(repository.update(model)).rejects.toThrow('Model with id 1 not found');
     });
 
-    test('should delete a model', async () => {
+    test('should delete a model (soft delete)', async () => {
         const model = createModel('1');
         await repository.save(model);
 
         await repository.delete('1');
 
+        // Should not be found via public API
         const found = await repository.findById('1');
         expect(found).toBeNull();
+
+        // Should not appear in findAll
+        const all = await repository.findAll();
+        expect(all).toHaveLength(0);
     });
 
     test('should throw error when deleting non-existent model', async () => {
         await expect(repository.delete('non-existent')).rejects.toThrow('Model with id non-existent not found');
+    });
+
+    test('should throw error when updates non-existent (soft deleted) model', async () => {
+        const model = createModel('1');
+        await repository.save(model);
+        await repository.delete('1');
+
+        const updated = model.withConfig({ temperature: 0.1 });
+        // Should throw because it's soft deleted and findById returns null
+        await expect(repository.update(updated)).rejects.toThrow('Model with id 1 not found');
     });
 });

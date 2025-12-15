@@ -7,7 +7,6 @@ import { ListModelsUseCase } from '../../../application/use-cases/ListModelsUseC
 import { UpdateModelUseCase } from '../../../application/use-cases/UpdateModelUseCase';
 import { DeleteModelUseCase } from '../../../application/use-cases/DeleteModelUseCase';
 import { ModelController } from './ModelController';
-import { Provider } from '../../../domain/entities/Provider';
 
 const router = Router();
 

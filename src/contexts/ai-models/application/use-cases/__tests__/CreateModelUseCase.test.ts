@@ -14,6 +14,7 @@ describe('CreateModelUseCase', () => {
     beforeEach(() => {
         mockModelRepository = {
             save: mock((model: Model) => Promise.resolve()),
+            exists: mock((id: string) => Promise.resolve(false)), // Default to not existing
         };
         mockProviderRepository = {
             findById: mock((id: string) => Promise.resolve(null)),
@@ -23,6 +24,15 @@ describe('CreateModelUseCase', () => {
             mockModelRepository as unknown as ModelRepository,
             mockProviderRepository as unknown as ProviderRepository
         );
+    });
+
+    test('should throw error if model id already exists', async () => {
+        mockModelRepository.exists = mock(() => Promise.resolve(true));
+
+        const dto = { id: 'existing-id', provider: 'openai', model: 'gpt-4' };
+
+        await expect(useCase.execute(dto)).rejects.toThrow("Model with id 'existing-id' already exists");
+        expect(mockModelRepository.save).not.toHaveBeenCalled();
     });
 
     test('should create a model successfully when provider and model are valid', async () => {

@@ -10,24 +10,34 @@ export class InMemoryModelRepository implements ModelRepository {
 
     async findById(id: string): Promise<Model | null> {
         const model = this.models.get(id);
-        return model || null;
+        if (!model || model.deletedAt) {
+            return null;
+        }
+        return model;
+    }
+
+    async exists(id: string): Promise<boolean> {
+        return this.models.has(id);
     }
 
     async findAll(): Promise<Model[]> {
-        return Array.from(this.models.values());
+        return Array.from(this.models.values()).filter(m => !m.deletedAt);
     }
 
     async update(model: Model): Promise<void> {
-        if (!this.models.has(model.id)) {
+        const existing = await this.findById(model.id);
+        if (!existing) {
             throw new Error(`Model with id ${model.id} not found`);
         }
         this.models.set(model.id, model);
     }
 
     async delete(id: string): Promise<void> {
-        if (!this.models.has(id)) {
+        const existing = await this.findById(id);
+        if (!existing) {
             throw new Error(`Model with id ${id} not found`);
         }
-        this.models.delete(id);
+        const deletedModel = existing.markAsDeleted();
+        this.models.set(id, deletedModel);
     }
 }

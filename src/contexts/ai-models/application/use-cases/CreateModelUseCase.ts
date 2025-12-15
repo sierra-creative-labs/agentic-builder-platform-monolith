@@ -12,6 +12,14 @@ export class CreateModelUseCase {
     ) { }
 
     async execute(dto: CreateModelDTO): Promise<Model> {
+        // 1. Validate ID Uniqueness if ID is provided
+        const id = dto.id ?? randomUUID();
+        const exists = await this.modelRepository.exists(id);
+        if (exists) {
+            throw new Error(`Model with id '${id}' already exists`);
+        }
+
+        // 2. Validate Provider
         const provider = await this.providerRepository.findById(dto.provider);
         if (!provider) {
             throw new Error(`Provider '${dto.provider}' not found`);
@@ -22,7 +30,7 @@ export class CreateModelUseCase {
         }
 
         const model = new Model({
-            id: dto.id ?? randomUUID(),
+            id: id,
             provider: dto.provider,
             model: dto.model,
             maxOutputTokens: dto.maxOutputTokens,

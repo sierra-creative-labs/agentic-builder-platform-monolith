@@ -16,8 +16,9 @@ export class Model {
     readonly temperature?: number;
     readonly topK?: number;
     readonly topP?: number;
+    readonly deletedAt?: Date;
 
-    constructor(props: ModelProps) {
+    constructor(props: ModelProps & { deletedAt?: Date }) {
         this.id = props.id;
         this.provider = props.provider;
         this.model = props.model;
@@ -25,6 +26,7 @@ export class Model {
         this.temperature = props.temperature;
         this.topK = props.topK;
         this.topP = props.topP;
+        this.deletedAt = props.deletedAt;
 
         this.validate();
     }
@@ -52,6 +54,14 @@ export class Model {
         return new Model({
             ...this,
             ...config,
+            deletedAt: this.deletedAt, // Preserve deletion status
+        });
+    }
+
+    markAsDeleted(): Model {
+        return new Model({
+            ...this,
+            deletedAt: new Date(),
         });
     }
 }
