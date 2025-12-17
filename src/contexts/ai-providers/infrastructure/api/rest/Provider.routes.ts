@@ -12,5 +12,6 @@ router.get('/:id', (req, res) => controller.getById(req, res));
 router.get('/', (req, res) => controller.getAll(req, res));
 router.put('/:id', (req, res) => controller.update(req, res));
 router.delete('/:id', (req, res) => controller.delete(req, res));
+router.post('/:id/models', (req, res) => controller.addModel(req, res));
 
 export { router as providerRoutes };

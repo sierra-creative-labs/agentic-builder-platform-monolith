@@ -6,4 +6,6 @@ export const TYPES = {
     UpdateProviderUseCase: Symbol.for("UpdateProviderUseCase"),
     DeleteProviderUseCase: Symbol.for("DeleteProviderUseCase"),
     ProviderController: Symbol.for("ProviderController"),
+    ProviderFinder: Symbol.for("ProviderFinder"),
+    AddProviderModelUseCase: Symbol.for("AddProviderModelUseCase"),
 };
