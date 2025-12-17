@@ -1,4 +1,5 @@
 import { Model } from '../../domain/entities/Model';
+import type { Provider } from '../../domain/entities/Provider';
 import type { ModelRepository } from '../../domain/ports/ModelRepository';
 import type { ProviderRepository } from '../../domain/ports/ProviderRepository';
 import type { CreateModelDTO } from '../dtos/ModelDTOs';
@@ -12,23 +13,9 @@ export class CreateModelUseCase {
     ) { }
 
     async execute(dto: CreateModelDTO): Promise<Model> {
-        // 1. Validate ID Uniqueness if ID is provided
         const id = dto.id ?? randomUUID();
-        const exists = await this.modelRepository.exists(id);
-        if (exists) {
-            throw new Error(`Model with id '${id}' already exists`);
-        }
-
-        // 2. Validate Provider
-        const provider = await this.providerRepository.findById(dto.provider);
-        if (!provider) {
-            throw new Error(`Provider '${dto.provider}' not found`);
-        }
-
-        if (!provider.hasModel(dto.model)) {
-            throw new Error(`Model with id '${dto.model}' is not available for provider '${dto.provider}'`);
-        }
-
+        await this.modelExists(id);
+        await this.validateProvider(dto.provider, dto.model);
         const model = new Model({
             id: id,
             provider: dto.provider,
@@ -38,9 +25,32 @@ export class CreateModelUseCase {
             topK: dto.topK,
             topP: dto.topP,
         });
-
         await this.modelRepository.save(model);
-
         return model;
+    }
+
+    private async modelExists(id: string): Promise<void> {
+        if (await this.modelRepository.exists(id)) {
+            throw new Error(`Model with id '${id}' already exists`);
+        }
+    }
+
+    private async validateProvider(providerId: string, modelId: string): Promise<void> {
+        const provider = await this.providerExists(providerId);
+        await this.providerModelExists(provider, modelId);
+    }
+
+    private async providerExists(id: string): Promise<Provider> {
+        const provider = await this.providerRepository.findById(id);
+        if (!provider) {
+            throw new Error(`Provider '${id}' not found`);
+        }
+        return provider
+    }
+
+    private async providerModelExists(provider: Provider, modelId: string): Promise<void> {
+        if (!provider.hasModel(modelId)) {
+            throw new Error(`Model with id '${modelId}' is not available for provider '${provider.id}'`);
+        }
     }
 }

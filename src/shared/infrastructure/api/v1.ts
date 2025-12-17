@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { modelRoutes } from '../../../contexts/ai-models/infrastructure/api/rest/model.routes';
-
+import { providerRoutes } from '../../../contexts/ai-providers/infrastructure/api/rest/Provider.routes';
 // This is the main router that aggregates all context routes
 const router = Router();
 
 // Mount context routes
 router.use('/models', modelRoutes);
+router.use('/providers', providerRoutes)
 
 // Health check route
 router.get('/health', (req, res) => {
