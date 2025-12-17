@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { HttpServer } from './shared/infrastructure/http/HttpServer';
 
 async function bootstrap() {

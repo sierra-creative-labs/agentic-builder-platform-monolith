@@ -1,17 +1,16 @@
 import { Router } from "express";
 import { ProviderController } from "./ProviderController";
-import { CreateProviderUseCase } from "../../../application/use-case/CreateProviderUseCase";
-import { InMemoryProviderRepository } from "../../persistence/InMemoryProviderRepository";
+import { container } from "../../di/container";
+import { TYPES } from "../../di/types";
 
 const router = Router();
 
-const providerRepository = new InMemoryProviderRepository();
-
-const createProviderUseCase = new CreateProviderUseCase(providerRepository);
-
-const controller = new ProviderController(createProviderUseCase)
+const controller = container.get<ProviderController>(TYPES.ProviderController);
 
 router.post('/', (req, res) => controller.create(req, res));
-
+router.get('/:id', (req, res) => controller.getById(req, res));
+router.get('/', (req, res) => controller.getAll(req, res));
+router.put('/:id', (req, res) => controller.update(req, res));
+router.delete('/:id', (req, res) => controller.delete(req, res));
 
 export { router as providerRoutes };

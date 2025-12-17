@@ -21,6 +21,8 @@
   "dependencies": {
     "@langchain/core": "^1.1.5",
     "@langchain/google-genai": "^2.1.0",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "inversify": "^7.10.6",
+    "reflect-metadata": "^0.2.2"
   }
 }

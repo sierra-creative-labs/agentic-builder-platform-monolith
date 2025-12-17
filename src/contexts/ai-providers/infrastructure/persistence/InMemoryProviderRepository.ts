@@ -1,6 +1,8 @@
+import { injectable } from "inversify";
 import type { ProviderRepository } from "../../domain/ports/ProviderRepository";
 import type { Provider } from "../../domain/entities/Provider";
 
+@injectable()
 export class InMemoryProviderRepository implements ProviderRepository {
     private readonly providers: Map<string, Provider> = new Map();
 

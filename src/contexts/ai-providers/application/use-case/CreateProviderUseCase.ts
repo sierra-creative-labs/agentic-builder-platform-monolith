@@ -1,13 +1,15 @@
+import { injectable, inject } from "inversify";
 import type { ProviderRepository } from "../../domain/ports/ProviderRepository";
 import type { CreateProviderDTO } from "../../application/dtos/ProviderDTOs";
 import { Provider } from "../../domain/entities/Provider";
-import { ProviderModel } from "../../domain/entities/ProviderModel";
 import { randomUUID } from "crypto";
+import { TYPES } from "../../infrastructure/di/types";
 
 
+@injectable()
 export class CreateProviderUseCase {
     constructor(
-        private readonly providerRepository: ProviderRepository
+        @inject(TYPES.ProviderRepository) private readonly providerRepository: ProviderRepository
     ) { }
 
     async execute(dto: CreateProviderDTO): Promise<Provider> {
