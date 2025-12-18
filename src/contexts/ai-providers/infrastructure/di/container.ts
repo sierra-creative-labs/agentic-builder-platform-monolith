@@ -10,6 +10,10 @@ import { CreateProviderUseCase } from "../../application/use-case/CreateProvider
 import { UpdateProviderUseCase } from "../../application/use-case/UpdateProviderUseCase";
 import { DeleteProviderUseCase } from "../../application/use-case/DeleteProviderUseCase";
 import { AddProviderModelUseCase } from "../../application/use-case/AddProviderModelUseCase";
+import { RemoveProviderModelUseCase } from "../../application/use-case/RemoveProviderModelUseCase";
+import { ActivateProviderModelUseCase } from "../../application/use-case/ActivateProviderModelUseCase";
+import { DeactivateProviderModelUseCase } from "../../application/use-case/DeactivateProviderModelUseCase";
+import { ProviderModelController } from "../api/rest/ProviderModelController";
 
 const container = new Container();
 
@@ -22,5 +26,9 @@ container.bind<UpdateProviderUseCase>(TYPES.UpdateProviderUseCase).to(UpdateProv
 container.bind<DeleteProviderUseCase>(TYPES.DeleteProviderUseCase).to(DeleteProviderUseCase);
 container.bind<ProviderController>(TYPES.ProviderController).to(ProviderController);
 container.bind<AddProviderModelUseCase>(TYPES.AddProviderModelUseCase).to(AddProviderModelUseCase);
+container.bind<RemoveProviderModelUseCase>(TYPES.RemoveProviderModelUseCase).to(RemoveProviderModelUseCase);
+container.bind<ActivateProviderModelUseCase>(TYPES.ActivateProviderModelUseCase).to(ActivateProviderModelUseCase);
+container.bind<DeactivateProviderModelUseCase>(TYPES.DeactivateProviderModelUseCase).to(DeactivateProviderModelUseCase);
+container.bind<ProviderModelController>(TYPES.ProviderModelController).to(ProviderModelController);
 
 export { container };

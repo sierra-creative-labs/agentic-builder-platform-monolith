@@ -8,4 +8,8 @@ export const TYPES = {
     ProviderController: Symbol.for("ProviderController"),
     ProviderFinder: Symbol.for("ProviderFinder"),
     AddProviderModelUseCase: Symbol.for("AddProviderModelUseCase"),
+    RemoveProviderModelUseCase: Symbol.for("RemoveProviderModelUseCase"),
+    ActivateProviderModelUseCase: Symbol.for("ActivateProviderModelUseCase"),
+    DeactivateProviderModelUseCase: Symbol.for("DeactivateProviderModelUseCase"),
+    ProviderModelController: Symbol.for("ProviderModelController"),
 };

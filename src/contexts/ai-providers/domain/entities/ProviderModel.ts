@@ -31,7 +31,7 @@ export class ProviderModel {
     private validate(): void {
         if (!this.id) throw new Error('ProviderModel id is required');
         if (!this.name) throw new Error('ProviderModel name is required');
-        if (!this.isActive) throw new Error('ProviderModel isActive is required');
+        if (this.isActive === undefined || this.isActive === null) throw new Error('ProviderModel isActive is required');
     }
 
     markAsActive(): ProviderModel {
